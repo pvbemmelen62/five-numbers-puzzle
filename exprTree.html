@@ -149,10 +149,6 @@ ExprTree.prototype._toString = function() {
     var numPerms = new Permutations(numbers);
     var count = 0;
     while(numPerms.hasNext()) {
-      // TMP
-      if(count == 10) {
-        break;
-      }
       let numPerm = numPerms.next();
       //
       exprTree.setNums(numPerm);
