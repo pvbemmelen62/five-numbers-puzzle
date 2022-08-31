@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://ff.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=v3H4jNFygquJ1G1MXPFMOHhiVDdGOqToo4uXE4Khe0pwIyia_v3ks3Dfb5HorljDeFrQ72IYrTnpRhsNl25zhsWc46UsKME3deK1JvsuYY6dhS_6Censj8Z0j4q2Ur_1NDSlYQ_jc0k5PMD0sBc9R1VOXjFZnesBgqMmaWPrH1xytCsisKmDGwthTbQ-HhRL2XELAPeRWJYk3HVKhwfsb12dwWGJtDgLF_8czPH0N5sQxbgzUbxwYcMwm6LW9uF7yG_9v8RAXdrcBD93oImRHGqanBu3Emf3qT0JG2rcPYAILpTkx4LaE_QPkU9rRNf_y24hopCLXOvOLSz8-boCyuE7CChwveOLCZ6fLvVEVJOV5a_PugVaZPitDI3fNels4JjFJIwPTBJccIsdETeYr21oq91i6Y7hE4w0cejeslnzco4WL_QvUl-pvu4rIH94rEoBbRn7wEWe3ak9CPYa8-DdIuCBH14NTnoH20-kAOu1MzyWK6X96XygWNZRfIyb-4aPLVfTk_LYsHCi_nq2XmGA2wHr6VENwFjhfb6WaEA2z9kGBIcGol0pmGNSh86v3XOh9oUI2uI8CtQjkBePGHU15CIFCibakb_dv2Xotkbhc2Nd34PwbY41mtpjlEtSHk3iXURHPiTSecZZv7o8fmnrV9DsBBzmxvTxQUK7JdguifHclTKu62QBc70MNh0NQzgLlpa-wZX5FdTP-t6PGkJrKcgkl7Rc2yEIJ2RT95YNpccUjqce4Jik68CqZ295q00dXOHDg9pJVOLsTq8AfiPJcF9cdJSx7lHJJ5BACtn0-Ss5ho1C2XSIXNn4uUVoY_If_9O8Ju1CFL-6XPclUyprQrji0xbN1n6AsJFkUUmbV2MbBfyyHscLGcE8HRiQvOI_jb6OzHMbyy0VjcaKdODed4XBtHEIVPgQDJOcpBGvEg-ymbvgwMN1UtM3lpSCLlsZMlDz3YERBjOgRCWjWfQH2WwymLNx0anrrIS4802rcJd4sXa7kMd1SyrLIT-9jiwUnE8flds4mnEWEePTGImw52VX5luRh0UY3xVfzWL4msKOX5kuou-yrZA7wF5deMdrx3gmWto5pds64am2EHm-x24tw7CGY85G6KPmEMJDfXWCNZGadirdcj7EdAun-ixKQcRxRtIpaGhVlfmS1rw_5PQ2uKBJRBtLo8f7y5RriD5li3Hya4M7jFmbD_cNuJctw-ztOaX2DzTqD5fPswTJ5N73rfc8oeFanHOHEa-z78Gtr2RRbibU2UJ5EFGh" nonce="a5df7177f0ca7d6159fa2b4e2d742f5a" charset="UTF-8"></script><script src="Permutations.js"></script>
+    <script src="NumberSystem.js"></script>
+  </head>
+  <body>
+    <div id="debugout">
+    </div>
+
+    <button onclick="doIt();" >calculate solutions</button>
+
+<script type="text/javascript">
+  // [JSDG5] JavaScript: The Definitive Guide, Fifth Edition; by David Flanagan.
+
+  function debug(s) {
+    var out = document.getElementById("debugout");
+    out.innerHTML += "<br />" + s;
+  }
+  function assert(condition, message) {
+    if(!condition) {
+      debug("assert failed: " + message);
+      throw new Error("assert failed: " + message);
+    }
+  }
+
+  /*------------------------------------------------------------------------
+    each leaf node holds a number
+    each internal nodes holds a binary operators
+
+          8
+         / \
+        7   4
+       / \
+      6   3
+     / \
+    5   2
+   / \
+  0   1
+
+  let opNodesSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
+  --------------------------------------------------------------------------*/
+
+function NumberNode(num) {
+  this.num = num;
+}
+NumberNode.prototype.eval = function() {
+  return this.num;
+}
+NumberNode.prototype.setNum = function(num) {
+  this.num = num;
+}
+NumberNode.prototype._toString = function() {
+  return "" + this.num;
+}
+//--------------------------------------------------
+function OperandNode(op, childLeft, childRight) {
+  this.op = op;
+  this.childLeft = childLeft;
+  this.childRight = childRight;
+}
+OperandNode.prototype.setOp = function(op) {
+  this.op = op;
+}
+OperandNode.prototype.eval = function() {
+  opFuncs[this.op](this.childLeft.eval(), this.childRight.eval());
+}
+OperandNode.prototype._toString = function() {
+  let rv = "(" + this.childLeft._toString() + opSyms[this.op] + this.childRight._toString() + ")";
+}
+
+//--------------------------------------------------
+let opFuncs = [];
+opFuncs[0] = (x,y) => x+y;
+opFuncs[1] = (x,y) => x-y;
+opFuncs[2] = (x,y) => x*y;
+opFuncs[3] = (x,y) => x/y;
+
+let opSyms = [];
+opSyms[0] = "+";
+opSyms[1] = "-";
+opSyms[2] = "*";
+opSyms[3] = "/";
+
+/* -----------------------------------------------
+  let exprFuncs = [];
+  exprFuncs[0] = (fs,ns) => fs[3](fs[2](fs[1](fs[0](ns[0],ns[1]),ns[2]),ns[3]),ns[4]);
+  exprFuncs[1] = (fs,ns) => fs[3](fs[2](fs[0](ns[0],ns[1]),fs[1](ns[2],ns[3])),ns[4]);
+  exprFuncs[2] = (fs,ns) => fs[3](fs[1](fs[0](ns[0],ns[1]),ns[2]),fs[2](ns[3],ns[4]));
+----------------------------------------------- */
+
+let opNodeSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
+
+//--------------------------------------------------
+function ExprTree(numNums, opNodeSpecs) {
+  this.numNums = numNums;
+  this.opNodeSpecs = opNodeSpecs;
+  this.numOps = this.opNodeSpecs.length;
+  this.top = this.findTop();
+
+  this.nodes = new Array(numNums).fill(null);
+  for(let i=0; i<numNums; ++i) {
+    this.nodes[i] = new NumberNode(null);
+  }
+  opNodeSpecs.forEach(spec => {
+    this.nodes[spec[0]] = new OperandNode(-1, this.nodes[spec[1]], this.nodes[spec[2]]);
+  });
+}
+ExprTree.prototype.findTop = function() {
+  let isChild = new Array(this.numNums + this.numOps).fill(false);
+  this.opNodeSpecs.forEach(spec => { isChild[spec[1]] = true; isChild[spec[2]] = true; });
+  let nonChild = isChild.filter(e => !e);
+  if(nonChild.length != 1) throw "Can't find top.";
+  return nonChild[0];
+}
+ExprTree.prototype.setOps = function(ops) {
+  if(ops.length != this.opNodeSpecs.length) { throw "setOps: wrong argument"; }
+  for(let i=0, j=this.numNums; i<ops.length; ++i, ++j) {
+    this.nodes[j].setOp(ops[i]);
+  }
+}
+ExprTree.prototype.setNums = function(nums) {
+  if(this.numNums != nums.length) { throw "setNums: wrong argument"; }
+  for(let i=0; i<nums.length; ++i) {
+    this.nodes[i].setNum(nums[i]);
+  }
+}
+ExprTree.prototype.eval = function() {
+  let rv = top.eval();
+  return rv;
+}
+ExprTree.prototype._toString = function() {
+  let rv = top._toString();
+  return rv;
+}
+
+//--------------------------------------------------
+
+  function closeEnough(x,y) {
+    let rv = Math.abs(x-y) < 0.001;
+    return rv;
+  }
+
+  function doIt() {
+
+    let exprTree = new ExprTree(5, opNodeSpecs);
+
+    var numbers = [13,21,23,25,27];
+    var numPerms = new Permutations(numbers);
+    var count = 0;
+    while(numPerms.hasNext()) {
+      // TMP
+      if(count == 10) {
+        break;
+      }
+      let numPerm = numPerms.next();
+      //
+      exprTree.setNums(numPerm);
+      //
+      let opsIter = new NumberSystem([4,4,4,4]);
+      while(opsIter.hasNext()) {
+        ++count;
+        let ops = opsIter.next();
+        //
+        exprTree.setOps(ops);
+        //
+        let val = exprTree.eval();
+        if(closeEnough(val, 15)) {
+            debug(exprTree._toString());
+        }
+      }
+    }
+    debug("count: " + count);
+  }
+  
+
+</script>
+  </body>
+</html>
