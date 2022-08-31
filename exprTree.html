@@ -66,6 +66,7 @@ OperandNode.prototype.eval = function() {
 }
 OperandNode.prototype._toString = function() {
   let rv = "(" + this.childLeft._toString() + opSyms[this.op] + this.childRight._toString() + ")";
+  return rv;
 }
 
 //--------------------------------------------------
