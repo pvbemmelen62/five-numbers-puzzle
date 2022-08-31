@@ -62,7 +62,8 @@ OperandNode.prototype.setOp = function(op) {
   this.op = op;
 }
 OperandNode.prototype.eval = function() {
-  opFuncs[this.op](this.childLeft.eval(), this.childRight.eval());
+  let rv = opFuncs[this.op](this.childLeft.eval(), this.childRight.eval());
+  return rv;
 }
 OperandNode.prototype._toString = function() {
   let rv = "(" + this.childLeft._toString() + opSyms[this.op] + this.childRight._toString() + ")";
@@ -96,7 +97,6 @@ function ExprTree(numNums, opNodeSpecs) {
   this.numNums = numNums;
   this.opNodeSpecs = opNodeSpecs;
   this.numOps = this.opNodeSpecs.length;
-  this.top = this.findTop();
 
   this.nodes = new Array(numNums).fill(null);
   for(let i=0; i<numNums; ++i) {
@@ -105,13 +105,17 @@ function ExprTree(numNums, opNodeSpecs) {
   opNodeSpecs.forEach(spec => {
     this.nodes[spec[0]] = new OperandNode(-1, this.nodes[spec[1]], this.nodes[spec[2]]);
   });
+  this.top = this.findTop();
 }
 ExprTree.prototype.findTop = function() {
   let isChild = new Array(this.numNums + this.numOps).fill(false);
   this.opNodeSpecs.forEach(spec => { isChild[spec[1]] = true; isChild[spec[2]] = true; });
-  let nonChild = isChild.filter(e => !e);
-  if(nonChild.length != 1) throw "Can't find top.";
-  return nonChild[0];
+  // check there is only one non-child:
+  let isNonChild = isChild.filter(e => !e);
+  if(isNonChild.length != 1) throw "Can't find top.";
+  //
+  let index = isChild.findIndex(e => !e);
+  return this.nodes[index];
 }
 ExprTree.prototype.setOps = function(ops) {
   if(ops.length != this.opNodeSpecs.length) { throw "setOps: wrong argument"; }
@@ -126,11 +130,11 @@ ExprTree.prototype.setNums = function(nums) {
   }
 }
 ExprTree.prototype.eval = function() {
-  let rv = top.eval();
+  let rv = this.top.eval();
   return rv;
 }
 ExprTree.prototype._toString = function() {
-  let rv = top._toString();
+  let rv = this.top._toString();
   return rv;
 }
 
