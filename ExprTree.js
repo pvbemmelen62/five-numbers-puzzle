@@ -1,44 +1,3 @@
-<html>
-  <head>
-    <script src="Permutations.js"></script>
-    <script src="NumberSystem.js"></script>
-  </head>
-  <body>
-    <div id="debugout">
-    </div>
-
-    <button onclick="doIt();" >calculate solutions</button>
-
-<script type="text/javascript">
-  // [JSDG5] JavaScript: The Definitive Guide, Fifth Edition; by David Flanagan.
-
-  function debug(s) {
-    var out = document.getElementById("debugout");
-    out.innerHTML += "<br />" + s;
-  }
-  function assert(condition, message) {
-    if(!condition) {
-      debug("assert failed: " + message);
-      throw new Error("assert failed: " + message);
-    }
-  }
-
-  /*------------------------------------------------------------------------
-    each leaf node holds a number
-    each internal nodes holds a binary operators
-
-          8
-         / \
-        7   4
-       / \
-      6   3
-     / \
-    5   2
-   / \
-  0   1
-
-  let opNodesSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
-  --------------------------------------------------------------------------*/
 
 function NumberNode(num) {
   this.num = num;
@@ -83,14 +42,12 @@ opSyms[1] = "-";
 opSyms[2] = "*";
 opSyms[3] = "/";
 
-/* -----------------------------------------------
-  let exprFuncs = [];
-  exprFuncs[0] = (fs,ns) => fs[3](fs[2](fs[1](fs[0](ns[0],ns[1]),ns[2]),ns[3]),ns[4]);
-  exprFuncs[1] = (fs,ns) => fs[3](fs[2](fs[0](ns[0],ns[1]),fs[1](ns[2],ns[3])),ns[4]);
-  exprFuncs[2] = (fs,ns) => fs[3](fs[1](fs[0](ns[0],ns[1]),ns[2]),fs[2](ns[3],ns[4]));
------------------------------------------------ */
-
-let opNodeSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
+// -----------------------------------------------
+//let exprFuncs = [];
+//exprFuncs[0] = (fs,ns) => fs[3](fs[2](fs[1](fs[0](ns[0],ns[1]),ns[2]),ns[3]),ns[4]);
+//exprFuncs[1] = (fs,ns) => fs[3](fs[2](fs[0](ns[0],ns[1]),fs[1](ns[2],ns[3])),ns[4]);
+//exprFuncs[2] = (fs,ns) => fs[3](fs[1](fs[0](ns[0],ns[1]),ns[2]),fs[2](ns[3],ns[4]));
+//------------------------------------------------ 
 
 //--------------------------------------------------
 function ExprTree(numNums, opNodeSpecs) {
@@ -138,42 +95,3 @@ ExprTree.prototype._toString = function() {
   return rv;
 }
 
-//--------------------------------------------------
-
-  function closeEnough(x,y) {
-    let rv = Math.abs(x-y) < 0.001;
-    return rv;
-  }
-
-  function doIt() {
-
-    let exprTree = new ExprTree(5, opNodeSpecs);
-
-    var numbers = [13,21,23,25,27];
-    var numPerms = new Permutations(numbers);
-    var count = 0;
-    while(numPerms.hasNext()) {
-      let numPerm = numPerms.next();
-      //
-      exprTree.setNums(numPerm);
-      //
-      let opsIter = new NumberSystem([4,4,4,4]);
-      while(opsIter.hasNext()) {
-        ++count;
-        let ops = opsIter.next();
-        //
-        exprTree.setOps(ops);
-        //
-        let val = exprTree.eval();
-        if(closeEnough(val, 15)) {
-            debug(exprTree._toString());
-        }
-      }
-    }
-    debug("count: " + count);
-  }
-  
-
-</script>
-  </body>
-</html>
