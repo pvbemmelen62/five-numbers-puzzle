@@ -35,12 +35,16 @@ opFuncs[0] = (x,y) => x+y;
 opFuncs[1] = (x,y) => x-y;
 opFuncs[2] = (x,y) => x*y;
 opFuncs[3] = (x,y) => x/y;
+opFuncs[4] = (x,y) => y-x;
+opFuncs[5] = (x,y) => y/x;
 
 let opSyms = [];
 opSyms[0] = "+";
 opSyms[1] = "-";
 opSyms[2] = "*";
 opSyms[3] = "/";
+opSyms[4] = "_";
+opSyms[5] = "\\";
 
 // -----------------------------------------------
 //let exprFuncs = [];
