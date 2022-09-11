@@ -24,6 +24,9 @@
     }
   }
 
+
+  let opNodeSpecs = [];
+
   /*------------------------------------------------------------------------
     each leaf node holds a number
     each internal nodes holds a binary operators
@@ -37,20 +40,24 @@
     5   2
    / \
   0   1
-
-  let opNodesSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
   --------------------------------------------------------------------------*/
-
-/* -----------------------------------------------
-  let exprFuncs = [];
-  exprFuncs[0] = (fs,ns) => fs[3](fs[2](fs[1](fs[0](ns[0],ns[1]),ns[2]),ns[3]),ns[4]);
-  exprFuncs[1] = (fs,ns) => fs[3](fs[2](fs[0](ns[0],ns[1]),fs[1](ns[2],ns[3])),ns[4]);
-  exprFuncs[2] = (fs,ns) => fs[3](fs[1](fs[0](ns[0],ns[1]),ns[2]),fs[2](ns[3],ns[4]));
------------------------------------------------ */
-
-let opNodeSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
+  opNodeSpecs.push( [[5,0,1],[6,5,2],[7,6,3],[8,7,4]]);
 
 //--------------------------------------------------
+
+  /*------------------------------------------------------------------------
+
+         8
+        / \
+       7   4
+      / \
+     /   \
+    5     6
+   / \   / \
+  0   1 2   3
+
+  --------------------------------------------------------------------------*/
+  opNodeSpecs.push( [[5,0,1],[6,2,3],[7,5,6],[8,7,4]]);
 
   function closeEnough(x,y) {
     let rv = Math.abs(x-y) < 0.001;
@@ -59,26 +66,30 @@ let opNodeSpecs = [[5,0,1],[6,5,2],[7,6,3],[8,7,4]];
 
   function doIt() {
 
-    let exprTree = new ExprTree(5, opNodeSpecs);
-
-    var numbers = [13,21,23,25,27];
-    var numPerms = new Permutations(numbers);
     var count = 0;
-    while(numPerms.hasNext()) {
-      let numPerm = numPerms.next();
-      //
-      exprTree.setNums(numPerm);
-      //
-      let opsIter = new NumberSystem([4,4,4,4]);
-      while(opsIter.hasNext()) {
-        ++count;
-        let ops = opsIter.next();
+
+    for(let i=0; i<opNodeSpecs.length; ++i) {
+  
+      let exprTree = new ExprTree(5, opNodeSpecs[i]);
+  
+      var numbers = [13,21,23,25,27];
+      var numPerms = new Permutations(numbers);
+      while(numPerms.hasNext()) {
+        let numPerm = numPerms.next();
         //
-        exprTree.setOps(ops);
+        exprTree.setNums(numPerm);
         //
-        let val = exprTree.eval();
-        if(closeEnough(val, 15)) {
-            debug(exprTree._toString());
+        let opsIter = new NumberSystem([4,4,4,4]);
+        while(opsIter.hasNext()) {
+          ++count;
+          let ops = opsIter.next();
+          //
+          exprTree.setOps(ops);
+          //
+          let val = exprTree.eval();
+          if(closeEnough(val, 15)) {
+              debug(exprTree._toString());
+          }
         }
       }
     }
